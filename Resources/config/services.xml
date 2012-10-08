@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="ruudk_moneybird.subdomain"/>
+        <parameter key="ruudk_moneybird.username"/>
+        <parameter key="ruudk_moneybird.password"/>
+        <parameter key="ruudk_moneybird.transport.class">Moneybird\HttpClient</parameter>
+        <parameter key="ruudk_moneybird.api_connector.class">Moneybird\ApiConnector</parameter>
+        <parameter key="ruudk_moneybird.xml_mapper.class">Moneybird\XmlMapper</parameter>
+    </parameters>
+
+    <services>
+        <service id="ruudk_moneybird.transport" class="%ruudk_moneybird.transport.class%">
+            <call method="setAuth">
+                <argument>%ruudk_moneybird.username%</argument>
+                <argument>%ruudk_moneybird.password%</argument>
+            </call>
+        </service>
+
+        <service id="ruudk_moneybird.xml_mapper" class="%ruudk_moneybird.xml_mapper.class%"/>
+
+        <service id="ruudk_moneybird.api_connector" class="%ruudk_moneybird.api_connector.class%">
+            <argument>%ruudk_moneybird.subdomain%</argument>
+            <argument type="service" id="ruudk_moneybird.transport" />
+            <argument type="service" id="ruudk_moneybird.xml_mapper" />
+        </service>
+
+        <service id="moneybird.api" alias="ruudk_moneybird.api_connector"/>
+    </services>
+</container>
